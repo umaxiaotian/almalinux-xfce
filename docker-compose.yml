@@ -1,0 +1,9 @@
+version: '3'
+services:
+  desktop:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: umaxiaotian/almalinux-xfce:8.8
+    ports:
+      - "6080:6080"
