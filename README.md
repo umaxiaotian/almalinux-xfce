@@ -1,5 +1,6 @@
 
 ## 日本語のAlmaLinuxとxfce4を使用したLinuxデスクトップをnoVNCでウェブブラウザからホストするコンテナ
+![image](https://github.com/umaxiaotian/almalinux-xfce/assets/29545778/5ea0912b-1cc1-4677-9bce-12705ff9bf69)
 
 **説明:**
 私はAlmaLinuxとxfce4を使用して日本語のAlmaLinux上で動作するLinuxデスクトップを作成し、noVNC技術を用いてウェブブラウザからアクセス可能な状態にするコンテナを作成しました。イメージをプルする際は、'umaxiaotian/almalinux-xfce'のようにイメージ名を指定し、noVNCはポート6080でアクセス可能です。
