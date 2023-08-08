@@ -18,7 +18,7 @@
    version: '3'
    services:
      linux-desktop:
-       image: umaxiaotian/almalinux-xfce
+       image: umaxiaotian/almalinux-xfce:<イメージタグ>
        ports:
          - "6080:6080"
    ```
