@@ -20,4 +20,6 @@
      linux-desktop:
        image: umaxiaotian/almalinux-xfce
        ports:
-         - "6080:80"
+         - "6080:6080"
+   ```
+何かあればTwitter @umarun_j にどうぞ。
