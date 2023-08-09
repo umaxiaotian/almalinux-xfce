@@ -1,14 +1,14 @@
 FROM almalinux:8.8
 
+USER root
+
 # Set root password
 RUN echo 'root:password' | chpasswd
 
-
-# 言語を日本語に設定、これで日本語ファイル名もちゃんと表示される
-RUN dnf -y install glibc-locale-source glibc-langpack-en
-# =>上記を実施しないと、[error] character map file `UTF-8' not found: No such file or directoryのエラーとなってしまう
+# 言語を日本語に設定
+RUN dnf -y install glibc-locale-source glibc-langpack-en langpacks-ja
 RUN localedef -i ja_JP -f UTF-8 ja_JP.UTF-8
-RUN echo 'LANG="ja_JP.UTF-8"' >  /etc/locale.conf
+RUN echo 'LANG="ja_JP.UTF-8"' > /etc/locale.conf
 ENV LANG ja_JP.UTF-8
 
 # 日付を日本語に設定
@@ -28,32 +28,30 @@ RUN dnf update -y && \
     dnf install -y tigervnc-server novnc xorg-x11-fonts-Type1 xorg-x11-fonts-misc google-chrome-stable firefox && \
     dnf clean all
 
-
-#不要ライブラリ削除
+# 不要ライブラリ削除
 RUN dnf remove -y xfce4-power-manager
 RUN rm /etc/xdg/autostart/xfce-polkit*
-# RUN dnf -y remove xfce4-polkit
-
-# PolicyKitの削除
-# RUN dnf remove -y polkit polkit-libs polkit-pkla-compat && \
-#     dnf autoremove -y && \
-#     dnf clean all
 
 # Set up Japanese language support
-RUN dnf install -y ibus-kkc vlgothic-fonts && \
-    echo "export GTK_IM_MODULE=ibus" >> ~/.bashrc && \
-    echo "export XMODIFIERS=@im=ibus" >> ~/.bashrc && \
-    echo "export QT_IM_MODULE=ibus" >> ~/.bashrc && \
-    dbus-uuidgen > /var/lib/dbus/machine-id
+RUN dnf install -y vlgothic-fonts fcitx && \
+    curl https://download-ib01.fedoraproject.org/pub/epel/7/x86_64/Packages/f/fcitx-anthy-0.2.2-4.el7.x86_64.rpm --output /tmp/fcitx-anthy-0.2.2-4.el7.x86_64.rpm && \
+    curl https://download-ib01.fedoraproject.org/pub/epel/7/x86_64/Packages/a/anthy-9100h-26.el7.x86_64.rpm --output /tmp/anthy-9100h-26.el7.x86_64.rpm && \
+    dnf localinstall -y /tmp/fcitx-anthy-0.2.2-4.el7.x86_64.rpm /tmp/anthy-9100h-26.el7.x86_64.rpm && \
+    echo "XMODIFIERS=@im=fcitx" >> /etc/locale.conf && \
+    echo "XMODIFIER=@im=fcitx" >> /etc/locale.conf && \
+    echo "GTK_IM_MODULE=fcitx" >> /etc/locale.conf && \
+    echo "QT_IM_MODULE=fcitx" >> /etc/locale.conf && \
+    echo "DefaultIMModule=fcitx" >> /etc/locale.conf
 
-# Set up VNC
+COPY ./environment /etc/environment
+RUN cp /usr/share/applications/fcitx.desktop /etc/xdg/autostart/.
+# Set up VNCfcitxBashCopy
 RUN mkdir ~/.vnc
 RUN echo "password" | vncpasswd -f > ~/.vnc/passwd
 RUN chmod 600 ~/.vnc/passwd
 
 # Set up noVNC
 RUN rm -f /usr/share/novnc/index.html && ln -s /usr/share/novnc/vnc.html /usr/share/novnc/index.html
-
 
 # Set up Chrome
 RUN echo "export DISPLAY=:1" >> ~/.bashrc
